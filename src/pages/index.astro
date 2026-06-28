@@ -1,0 +1,61 @@
+---
+const links = [
+  {
+    name: "GitHub",
+    url: "https://github.com/YOUR_USERNAME",
+  },
+  {
+    name: "Telegram",
+    url: "https://t.me/YOUR_USERNAME",
+  },
+  {
+    name: "TikTok",
+    url: "https://tiktok.com/@YOUR_USERNAME",
+  },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Your Bio</title>
+  </head>
+
+  <body class="bg-zinc-950 text-zinc-100 min-h-screen flex items-center justify-center px-6">
+    <main class="max-w-xl w-full">
+      <div class="space-y-8">
+
+        <div class="space-y-4">
+          <div class="w-24 h-24 rounded-full bg-zinc-800"></div>
+
+          <div>
+            <h1 class="text-4xl font-bold">
+              Your Name
+            </h1>
+
+            <p class="text-zinc-400 mt-2">
+              Independent builder focused on automation,
+              crypto systems, analysis, and experimental projects.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          {
+            links.map((link) => (
+              <a
+                href={link.url}
+                target="_blank"
+                class="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-4 hover:bg-zinc-800 transition"
+              >
+                {link.name}
+              </a>
+            ))
+          }
+        </div>
+
+      </div>
+    </main>
+  </body>
+</html>

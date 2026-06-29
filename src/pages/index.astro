@@ -13,13 +13,9 @@ import avatarImg from '../assets/avt.png';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LLwin</title>
+    <title>NTTP</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
 
       body {
         background: #060c18;
@@ -32,296 +28,240 @@ import avatarImg from '../assets/avt.png';
         position: relative;
       }
 
+      /* ── Canvas layers ── */
       #trading-canvas {
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        height: 100%;
+        position: fixed; inset: 0;
+        width: 100%; height: 100%;
         z-index: 0;
       }
-
+      #particle-canvas {
+        position: fixed; inset: 0;
+        width: 100%; height: 100%;
+        z-index: 1;
+        pointer-events: none;
+      }
       .vignette {
-        position: fixed;
-        inset: 0;
-        background: radial-gradient(ellipse at center, transparent 40%, #060c18 90%);
-        z-index: 1;
-        pointer-events: none;
+        position: fixed; inset: 0;
+        background: radial-gradient(ellipse at center, transparent 30%, #060c18 85%);
+        z-index: 2; pointer-events: none;
       }
-
       .fade-bottom {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 200px;
-        background: linear-gradient(to top, #060c18, transparent);
-        z-index: 1;
-        pointer-events: none;
+        position: fixed; bottom: 0; left: 0; right: 0; height: 220px;
+        background: linear-gradient(to top, #060c18 30%, transparent);
+        z-index: 2; pointer-events: none;
       }
 
+      /* ── Main layout ── */
       main {
-        position: relative;
-        z-index: 10;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 32px;
-        padding: 24px;
-        width: 100%;
-        max-width: 420px;
+        position: relative; z-index: 10;
+        display: flex; flex-direction: column;
+        align-items: center; gap: 20px;
+        padding: 24px; width: 100%; max-width: 440px;
       }
 
+      /* ── Avatar ── */
       .logo-wrap {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 14px;
+        display: flex; flex-direction: column; align-items: center; gap: 16px;
         animation: fadeDown 0.7s ease both;
       }
-
       .logo-wrap .avt {
-        width: 84px;
-        height: 84px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid rgba(37, 99, 235, 0.5);
-        box-shadow: 0 0 20px rgba(37, 99, 235, 0.25);
+        width: 88px; height: 88px;
+        border-radius: 50%; object-fit: cover;
+        border: 2px solid rgba(37,99,235,0.5);
+        box-shadow: 0 0 32px rgba(37,99,235,0.3);
       }
 
-      .logo-wrap .logo {
-        height: 48px;
-        width: auto;
-        filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.5));
+      /* ── NTTP name — big & bold ── */
+      .name-block {
+        display: flex; flex-direction: column; align-items: center; gap: 10px;
+        animation: fadeDown 0.7s 0.08s ease both;
+      }
+      .name-nttp {
+        font-size: clamp(52px, 14vw, 72px);
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        background: linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 0 28px rgba(59,130,246,0.55));
+        line-height: 1;
+        text-align: center;
       }
 
+      /* ── Typewriter tagline ── */
+      .tagline-wrap {
+        min-height: 26px;
+        display: flex; align-items: center; justify-content: center;
+        animation: fadeDown 0.7s 0.15s ease both;
+      }
       .tagline {
-        color: #ffffff;
-          font-size: 16px;
-          font-weight: 600;
-          letter-spacing: 0.04em;
-          text-transform: none;
-          text-align: center;
-          animation: fadeDown 0.7s 0.1s ease both;
+        color: #94a3b8;
+        font-size: 15px;
+        font-weight: 400;
+        letter-spacing: 0.06em;
+        text-align: center;
+      }
+      .cursor {
+        display: inline-block;
+        width: 2px; height: 1em;
+        background: #3b82f6;
+        margin-left: 2px;
+        vertical-align: middle;
+        animation: blink 0.8s step-end infinite;
+      }
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0; }
       }
 
       .divider {
-        width: 40px;
-        height: 1px;
-        background: rgba(37, 99, 235, 0.4);
-        animation: fadeDown 0.7s 0.15s ease both;
+        width: 40px; height: 1px;
+        background: rgba(37,99,235,0.35);
+        animation: fadeDown 0.7s 0.2s ease both;
       }
 
-      .contacts {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        width: 100%;
+      /* ── TradingView chart ── */
+      .chart-wrap {
+        width: 100%; border-radius: 14px; overflow: hidden;
+        border: 1px solid rgba(37,99,235,0.15);
+        background: rgba(255,255,255,0.02);
         animation: fadeUp 0.7s 0.25s ease both;
       }
+      .tradingview-widget-container { width: 100%; height: 200px; }
 
+      /* ── Buttons ── */
+      .contacts {
+        display: flex; flex-direction: column; gap: 11px;
+        width: 100%;
+        animation: fadeUp 0.7s 0.3s ease both;
+      }
       .btn {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 14px 20px;
-        border-radius: 14px;
+        display: flex; align-items: center; gap: 14px;
+        padding: 14px 20px; border-radius: 14px;
         text-decoration: none;
         transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
         border: 1px solid rgba(255,255,255,0.07);
         background: rgba(255,255,255,0.04);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        color: #e2e8f0;
-        font-size: 15px;
-        font-weight: 500;
-        position: relative;
-        overflow: hidden;
+        color: #e2e8f0; font-size: 15px; font-weight: 500;
+        position: relative; overflow: hidden;
       }
-
       .btn::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        transition: opacity 0.18s ease;
-        border-radius: inherit;
+        content: ''; position: absolute; inset: 0;
+        opacity: 0; transition: opacity 0.18s ease; border-radius: inherit;
       }
-
-      .btn-llwin::before {
-        background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(37,99,235,0.05));
-      }
-
-      .btn-tiktok::before {
-        background: linear-gradient(135deg, rgba(37,197,197,0.12), rgba(255,0,80,0.12));
-      }
-
-      .btn-telegram::before {
-        background: linear-gradient(135deg, rgba(41,182,246,0.15), rgba(37,99,235,0.1));
-      }
-
-      .btn:hover {
-        transform: translateY(-2px);
-        border-color: rgba(255,255,255,0.14);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      }
-
-      .btn:hover::before {
-        opacity: 1;
-      }
-
+      .btn-llwin::before   { background: linear-gradient(135deg,rgba(37,99,235,.15),rgba(37,99,235,.05)); }
+      .btn-tiktok::before  { background: linear-gradient(135deg,rgba(37,197,197,.12),rgba(255,0,80,.12)); }
+      .btn-telegram::before{ background: linear-gradient(135deg,rgba(41,182,246,.15),rgba(37,99,235,.1)); }
+      .btn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.14); box-shadow: 0 8px 32px rgba(0,0,0,.3); }
+      .btn:hover::before { opacity: 1; }
       .btn-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
+        width: 36px; height: 36px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
       }
+      .btn-llwin .btn-icon   { background: #1a2540; }
+      .btn-tiktok .btn-icon  { background: #111; }
+      .btn-telegram .btn-icon{ background: #1da1f2; }
+      .btn-icon img { width: 22px; height: 22px; object-fit: contain; }
+      .btn-label { flex: 1; }
+      .btn-label .name { display: block; font-size: 15px; font-weight: 500; color: #e2e8f0; }
+      .btn-label .sub  { display: block; font-size: 12px; color: rgba(148,163,184,.7); margin-top: 1px; }
+      .btn-arrow { color: rgba(148,163,184,.4); font-size: 18px; transition: transform .18s ease, color .18s ease; }
+      .btn:hover .btn-arrow { transform: translateX(3px); color: rgba(148,163,184,.8); }
 
-      .btn-llwin .btn-icon {
-        background: #1a2540;
-      }
-
-      .btn-tiktok .btn-icon {
-        background: #111;
-      }
-
-      .btn-telegram .btn-icon {
-        background: #1da1f2;
-      }
-
-      .btn-icon img {
-        width: 22px;
-        height: 22px;
-        object-fit: contain;
-      }
-
-      .btn-label {
-        flex: 1;
-      }
-
-      .btn-label .name {
-        display: block;
-        font-size: 15px;
-        font-weight: 500;
-        color: #e2e8f0;
-      }
-
-      .btn-label .sub {
-        display: block;
-        font-size: 12px;
-        color: rgba(148,163,184,0.7);
-        margin-top: 1px;
-      }
-
-      .btn-arrow {
-        color: rgba(148,163,184,0.4);
-        font-size: 18px;
-        transition: transform 0.18s ease, color 0.18s ease;
-      }
-
-      .btn:hover .btn-arrow {
-        transform: translateX(3px);
-        color: rgba(148,163,184,0.8);
-      }
-
+      /* ── Ticker ── */
       .ticker-wrap {
-        width: 100%;
-        overflow: hidden;
+        width: 100%; overflow: hidden;
         mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
         -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-        animation: fadeUp 0.7s 0.35s ease both;
+        animation: fadeUp 0.7s 0.38s ease both;
       }
-
       .ticker-track {
-        display: flex;
-        gap: 24px;
-        animation: tickerScroll 28s linear infinite;
+        display: flex; gap: 24px;
+        animation: tickerScroll 30s linear infinite;
         width: max-content;
       }
-
       .ticker-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        font-family: 'SF Mono', 'Fira Mono', monospace;
-        color: rgba(148,163,184,0.6);
-        white-space: nowrap;
+        display: flex; align-items: center; gap: 6px;
+        font-size: 11px; font-family: 'SF Mono','Fira Mono',monospace;
+        color: rgba(148,163,184,.6); white-space: nowrap;
       }
-
-      .ticker-item .sym {
-        color: rgba(203,213,225,0.8);
-        font-weight: 600;
-      }
-
-      .ticker-item .up { color: #10b981; }
-      .ticker-item .dn { color: #ef4444; }
-
+      .ticker-item .sym { color: rgba(203,213,225,.8); font-weight: 600; }
+      .ticker-item .up  { color: #10b981; }
+      .ticker-item .dn  { color: #ef4444; }
+      .ticker-item .neu { color: #94a3b8; }
       @keyframes tickerScroll {
-        0% { transform: translateX(0); }
+        0%   { transform: translateX(0); }
         100% { transform: translateX(-50%); }
       }
 
+      /* ── Global animations ── */
       @keyframes fadeDown {
         from { opacity: 0; transform: translateY(-16px); }
         to   { opacity: 1; transform: translateY(0); }
       }
-
       @keyframes fadeUp {
         from { opacity: 0; transform: translateY(16px); }
         to   { opacity: 1; transform: translateY(0); }
       }
 
       @media (max-width: 480px) {
-        .logo-wrap .logo { height: 40px; }
         .logo-wrap .avt { width: 72px; height: 72px; }
-        main { gap: 24px; }
+        main { gap: 16px; }
+        .tradingview-widget-container { height: 170px; }
       }
     </style>
   </head>
 
   <body>
     <canvas id="trading-canvas"></canvas>
+    <canvas id="particle-canvas"></canvas>
     <div class="vignette"></div>
     <div class="fade-bottom"></div>
 
     <main>
+      <!-- Avatar -->
       <div class="logo-wrap">
         <img src={avatarImg.src} alt="Avatar" class="avt" />
       </div>
 
-      <p class="tagline">NTTP</p>
+      <!-- Name + typewriter tagline -->
+      <div class="name-block">
+        <div class="name-nttp">NTTP</div>
+        <div class="tagline-wrap">
+          <span class="tagline" id="tagline-text"></span><span class="cursor"></span>
+        </div>
+      </div>
+
       <div class="divider"></div>
 
+      <!-- TradingView BTC/USDT live mini chart -->
+      <div class="chart-wrap">
+        <div class="tradingview-widget-container" id="tv-chart"></div>
+      </div>
+
+      <!-- Social links -->
       <div class="contacts">
         <a href={llwinUrl} target="_blank" rel="noopener" class="btn btn-llwin">
-          <div class="btn-icon">
-            <img src={llwinLogo.src} alt="LLwin" />
-          </div>
+          <div class="btn-icon"><img src={llwinLogo.src} alt="LLwin" /></div>
           <div class="btn-label">
             <span class="name">LLwin</span>
             <span class="sub">Cổng game tốt nhất hiện tại</span>
           </div>
           <span class="btn-arrow">›</span>
         </a>
-
         <a href={tiktokUrl} target="_blank" rel="noopener" class="btn btn-tiktok">
-          <div class="btn-icon">
-            <img src={tiktokLogo.src} alt="TikTok" />
-          </div>
+          <div class="btn-icon"><img src={tiktokLogo.src} alt="TikTok" /></div>
           <div class="btn-label">
             <span class="name">TikTok</span>
             <span class="sub">Phân tích & thực chiến</span>
           </div>
           <span class="btn-arrow">›</span>
         </a>
-
         <a href={telegramUrl} target="_blank" rel="noopener" class="btn btn-telegram">
-          <div class="btn-icon">
-            <img src={telegramLogo.src} alt="Telegram" />
-          </div>
+          <div class="btn-icon"><img src={telegramLogo.src} alt="Telegram" /></div>
           <div class="btn-label">
             <span class="name">Telegram</span>
             <span class="sub">Chia sẻ & giao lưu</span>
@@ -330,43 +270,55 @@ import avatarImg from '../assets/avt.png';
         </a>
       </div>
 
+      <!-- Ticker -->
       <div class="ticker-wrap">
-        <div class="ticker-track">
-          <span class="ticker-item"><span class="sym">BTC/USDT</span> <span class="up">▲ +2.34%</span></span>
-          <span class="ticker-item"><span class="sym">ETH/USDT</span> <span class="dn">▼ -0.87%</span></span>
-          <span class="ticker-item"><span class="sym">SOL/USDT</span> <span class="up">▲ +5.12%</span></span>
-          <span class="ticker-item"><span class="sym">BNB/USDT</span> <span class="up">▲ +1.05%</span></span>
-          <span class="ticker-item"><span class="sym">XRP/USDT</span> <span class="dn">▼ -1.43%</span></span>
-          <span class="ticker-item"><span class="sym">DOGE/USDT</span> <span class="up">▲ +3.67%</span></span>
-          <span class="ticker-item"><span class="sym">ADA/USDT</span> <span class="dn">▼ -0.22%</span></span>
-          <span class="ticker-item"><span class="sym">AVAX/USDT</span> <span class="up">▲ +4.88%</span></span>
-          <span class="ticker-item"><span class="sym">BTC/USDT</span> <span class="up">▲ +2.34%</span></span>
-          <span class="ticker-item"><span class="sym">ETH/USDT</span> <span class="dn">▼ -0.87%</span></span>
-          <span class="ticker-item"><span class="sym">SOL/USDT</span> <span class="up">▲ +5.12%</span></span>
-          <span class="ticker-item"><span class="sym">BNB/USDT</span> <span class="up">▲ +1.05%</span></span>
-          <span class="ticker-item"><span class="sym">XRP/USDT</span> <span class="dn">▼ -1.43%</span></span>
-          <span class="ticker-item"><span class="sym">DOGE/USDT</span> <span class="up">▲ +3.67%</span></span>
-          <span class="ticker-item"><span class="sym">ADA/USDT</span> <span class="dn">▼ -0.22%</span></span>
-          <span class="ticker-item"><span class="sym">AVAX/USDT</span> <span class="up">▲ +4.88%</span></span>
+        <div class="ticker-track" id="ticker-track">
+          <!-- populated by JS -->
+          <span class="ticker-item"><span class="sym">BTC/USDT</span> <span class="neu">Đang tải...</span></span>
         </div>
       </div>
     </main>
 
+    <!-- ═══════════════════════════════════════
+         SCRIPT 1 – TradingView widget
+    ═══════════════════════════════════════ -->
+    <script is:inline>
+      (function() {
+        const container = document.getElementById('tv-chart');
+        const script = document.createElement('script');
+        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
+        script.async = true;
+        script.innerHTML = JSON.stringify({
+          "symbol": "BINANCE:BTCUSDT",
+          "width": "100%",
+          "height": "200",
+          "locale": "vi_VN",
+          "dateRange": "1D",
+          "colorTheme": "dark",
+          "isTransparent": true,
+          "autosize": true,
+          "largeChartUrl": ""
+        });
+        container.appendChild(script);
+      })();
+    </script>
+
+    <!-- ═══════════════════════════════════════
+         SCRIPT 2 – Candle chart background
+    ═══════════════════════════════════════ -->
     <script is:inline>
       (() => {
         const canvas = document.getElementById('trading-canvas');
         const ctx = canvas.getContext('2d');
-
         let W, H, candles = [];
-        const COLS = { up: '#10b981', dn: '#ef4444', upA: 'rgba(16,185,129,', dnA: 'rgba(239,68,68,' };
-        const CANDLE_W = 10, GAP = 6, STEP = CANDLE_W + GAP;
+        const COLS = { up:'#10b981', dn:'#ef4444', upA:'rgba(16,185,129,', dnA:'rgba(239,68,68,' };
+        const CW = 10, GAP = 6, STEP = CW + GAP;
 
         function resize() {
           W = canvas.width = window.innerWidth;
           H = canvas.height = window.innerHeight;
           generateCandles();
         }
-
         function generateCandles() {
           const count = Math.ceil(W / STEP) + 4;
           candles = [];
@@ -381,7 +333,6 @@ import avatarImg from '../assets/avt.png';
             candles.push({ open, close, high, low });
           }
         }
-
         function evolve() {
           candles.shift();
           const last = candles[candles.length - 1];
@@ -393,90 +344,215 @@ import avatarImg from '../assets/avt.png';
           const low  = Math.min(open, close) - Math.random() * 0.025;
           candles.push({ open, close, high, low });
         }
-
         function drawChart(offsetX) {
           const padT = H * 0.08, padB = H * 0.08;
           const chartH = H - padT - padB;
-          function py(v) { return padT + (1 - v) * chartH; }
+          const py = v => padT + (1 - v) * chartH;
 
-          ctx.strokeStyle = 'rgba(37,99,235,0.06)';
+          ctx.strokeStyle = 'rgba(37,99,235,0.05)';
           ctx.lineWidth = 0.5;
           for (let g = 0; g <= 4; g++) {
             const y = padT + (g / 4) * chartH;
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(W, y);
-            ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
           }
-
           candles.forEach((c, i) => {
             const x = i * STEP - offsetX + STEP;
             if (x < -STEP || x > W + STEP) return;
-
             const bull = c.close >= c.open;
             const col = bull ? COLS.up : COLS.dn;
             const colA = bull ? COLS.upA : COLS.dnA;
-
-            const openY  = py(c.open);
-            const closeY = py(c.close);
-            const highY  = py(c.high);
-            const lowY   = py(c.low);
-            const bodyTop    = Math.min(openY, closeY);
-            const bodyBottom = Math.max(openY, closeY);
-            const bodyH = Math.max(1, bodyBottom - bodyTop);
-
-            const grad = ctx.createLinearGradient(x, bodyTop, x, bodyBottom + 40);
-            grad.addColorStop(0, colA + '0.18)');
+            const openY = py(c.open), closeY = py(c.close);
+            const highY = py(c.high),  lowY   = py(c.low);
+            const bodyTop = Math.min(openY, closeY);
+            const bodyH   = Math.max(1, Math.abs(closeY - openY));
+            const grad = ctx.createLinearGradient(x, bodyTop, x, bodyTop + bodyH + 40);
+            grad.addColorStop(0, colA + '0.16)');
             grad.addColorStop(1, colA + '0)');
             ctx.fillStyle = grad;
-            ctx.fillRect(x - CANDLE_W / 2, bodyTop, CANDLE_W, bodyH + 40);
-
-            ctx.strokeStyle = col;
-            ctx.globalAlpha = 0.55;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(x, highY);
-            ctx.lineTo(x, lowY);
-            ctx.stroke();
+            ctx.fillRect(x - CW / 2, bodyTop, CW, bodyH + 40);
+            ctx.strokeStyle = col; ctx.globalAlpha = 0.5; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(x, highY); ctx.lineTo(x, lowY); ctx.stroke();
             ctx.globalAlpha = 1;
-
-            ctx.fillStyle = col;
-            ctx.globalAlpha = bull ? 0.75 : 0.6;
-            ctx.fillRect(x - CANDLE_W / 2, bodyTop, CANDLE_W, bodyH);
+            ctx.fillStyle = col; ctx.globalAlpha = bull ? 0.72 : 0.58;
+            ctx.fillRect(x - CW / 2, bodyTop, CW, bodyH);
             ctx.globalAlpha = 1;
           });
-
           ctx.beginPath();
-          ctx.strokeStyle = 'rgba(37,99,235,0.35)';
+          ctx.strokeStyle = 'rgba(37,99,235,0.3)';
           ctx.lineWidth = 1.5;
           const maLen = 7;
           for (let i = maLen; i < candles.length; i++) {
-            const avg = candles.slice(i - maLen, i).reduce((s, c) => s + (c.open + c.close) / 2, 0) / maLen;
+            const avg = candles.slice(i - maLen, i).reduce((s,c) => s + (c.open + c.close) / 2, 0) / maLen;
             const x = i * STEP - offsetX + STEP;
             const y = py(avg);
-            if (i === maLen) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+            if (i === maLen) ctx.moveTo(x, y); else ctx.lineTo(x, y);
           }
           ctx.stroke();
         }
-
         let offset = 0;
-        const SPEED = 0.4;
-
         function draw() {
           ctx.clearRect(0, 0, W, H);
-          offset += SPEED;
-          if (offset >= STEP) {
-            offset -= STEP;
-            evolve();
-          }
+          offset += 0.35;
+          if (offset >= STEP) { offset -= STEP; evolve(); }
           drawChart(offset);
           requestAnimationFrame(draw);
         }
-
         window.addEventListener('resize', resize);
-        resize();
-        draw();
+        resize(); draw();
+      })();
+    </script>
+
+    <!-- ═══════════════════════════════════════
+         SCRIPT 3 – Star/particle field
+    ═══════════════════════════════════════ -->
+    <script is:inline>
+      (() => {
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, stars = [];
+        const COUNT = 90;
+
+        function resize() {
+          W = canvas.width = window.innerWidth;
+          H = canvas.height = window.innerHeight;
+          stars = Array.from({ length: COUNT }, () => makestar());
+        }
+        function makestar() {
+          return {
+            x: Math.random() * (W || window.innerWidth),
+            y: Math.random() * (H || window.innerHeight),
+            r: Math.random() * 1.2 + 0.2,
+            speed: Math.random() * 0.18 + 0.04,
+            alpha: Math.random() * 0.5 + 0.15,
+            drift: (Math.random() - 0.5) * 0.12,
+            pulse: Math.random() * Math.PI * 2,
+          };
+        }
+        function draw() {
+          ctx.clearRect(0, 0, W, H);
+          const t = performance.now() / 1000;
+          stars.forEach(s => {
+            s.y -= s.speed;
+            s.x += s.drift;
+            s.pulse += 0.015;
+            if (s.y < -4 || s.x < -4 || s.x > W + 4) {
+              Object.assign(s, makestar());
+              s.y = H + 4;
+              s.x = Math.random() * W;
+            }
+            const a = s.alpha * (0.7 + 0.3 * Math.sin(s.pulse));
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(147,197,253,${a})`;
+            ctx.fill();
+          });
+          requestAnimationFrame(draw);
+        }
+        window.addEventListener('resize', resize);
+        resize(); draw();
+      })();
+    </script>
+
+    <!-- ═══════════════════════════════════════
+         SCRIPT 4 – Typewriter tagline
+    ═══════════════════════════════════════ -->
+    <script is:inline>
+      (() => {
+        const lines = [
+          'Tư vấn cổng nạp',
+          'Hiểu cơ chế game',
+          'Tư vấn tài chính',
+        ];
+        const el = document.getElementById('tagline-text');
+        let li = 0, ci = 0, deleting = false;
+        const SPEED_TYPE = 72;   // ms per char (slower = more elegant)
+        const SPEED_DEL  = 36;
+        const PAUSE_FULL = 2200; // hold completed line
+        const PAUSE_EMPTY= 400;  // pause before typing next
+
+        function tick() {
+          const line = lines[li];
+          if (!deleting) {
+            el.textContent = line.slice(0, ++ci);
+            if (ci >= line.length) {
+              deleting = true;
+              setTimeout(tick, PAUSE_FULL);
+              return;
+            }
+            setTimeout(tick, SPEED_TYPE);
+          } else {
+            el.textContent = line.slice(0, --ci);
+            if (ci <= 0) {
+              deleting = false;
+              li = (li + 1) % lines.length;
+              setTimeout(tick, PAUSE_EMPTY);
+              return;
+            }
+            setTimeout(tick, SPEED_DEL);
+          }
+        }
+        setTimeout(tick, 900);
+      })();
+    </script>
+
+    <!-- ═══════════════════════════════════════
+         SCRIPT 5 – Real-time crypto ticker
+         CoinGecko free API (no key needed)
+    ═══════════════════════════════════════ -->
+    <script is:inline>
+      (() => {
+        const COINS = [
+          { id: 'bitcoin',      sym: 'BTC/USDT' },
+          { id: 'ethereum',     sym: 'ETH/USDT' },
+          { id: 'solana',       sym: 'SOL/USDT' },
+          { id: 'binancecoin',  sym: 'BNB/USDT' },
+          { id: 'ripple',       sym: 'XRP/USDT' },
+          { id: 'dogecoin',     sym: 'DOGE/USDT' },
+          { id: 'cardano',      sym: 'ADA/USDT' },
+          { id: 'avalanche-2',  sym: 'AVAX/USDT' },
+        ];
+
+        const track = document.getElementById('ticker-track');
+
+        function renderTicker(data) {
+          const items = COINS.map(c => {
+            const info = data[c.id];
+            if (!info) return '';
+            const pct = info.usd_24h_change;
+            const price = info.usd;
+            const cls = pct > 0 ? 'up' : pct < 0 ? 'dn' : 'neu';
+            const arrow = pct > 0 ? '▲' : pct < 0 ? '▼' : '–';
+            const pctStr = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
+            const priceStr = price >= 1
+              ? '$' + price.toLocaleString('en-US', { maximumFractionDigits: 2 })
+              : '$' + price.toFixed(5);
+            return `<span class="ticker-item">
+              <span class="sym">${c.sym}</span>
+              <span class="${cls}">${arrow} ${pctStr}</span>
+              <span style="color:rgba(148,163,184,.45)">${priceStr}</span>
+            </span>`;
+          }).join('');
+          // duplicate for seamless loop
+          track.innerHTML = items + items;
+        }
+
+        async function fetchPrices() {
+          const ids = COINS.map(c => c.id).join(',');
+          try {
+            const res = await fetch(
+              `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`,
+              { cache: 'no-store' }
+            );
+            if (!res.ok) return;
+            const data = await res.json();
+            renderTicker(data);
+          } catch (e) {
+            console.warn('Ticker fetch failed:', e);
+          }
+        }
+
+        fetchPrices();
+        setInterval(fetchPrices, 60_000); // refresh every 60s
       })();
     </script>
   </body>

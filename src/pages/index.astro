@@ -434,35 +434,16 @@ import avatarImg from '../assets/avt.png';
       ========================= */
 
       .ticker-wrap {
-        width: 100%;
-        overflow: hidden;
+  width: 100%;
+  overflow: hidden;
 
-        position: relative;
-        z-index: 20;
+  position: relative;
+  z-index: 50;
 
-        margin-top: 6px;
+  margin-top: 8px;
 
-        mask-image:
-          linear-gradient(
-            to right,
-            transparent,
-            black 10%,
-            black 90%,
-            transparent
-          );
-
-        -webkit-mask-image:
-          linear-gradient(
-            to right,
-            transparent,
-            black 10%,
-            black 90%,
-            transparent
-          );
-
-        animation:
-          fadeUp 0.6s 0.32s ease both;
-      }
+  padding: 6px 0;
+}
 
       .ticker-track {
         display: flex;
@@ -476,27 +457,32 @@ import avatarImg from '../assets/avt.png';
       }
 
       .ticker-item {
-        display: flex;
-        align-items: center;
+  display: flex;
+  align-items: center;
 
-        gap: 6px;
+  gap: 6px;
 
-        white-space: nowrap;
+  white-space: nowrap;
 
-        font-size: 12px;
+  font-size: 12px;
 
-        font-family:
-          'SF Mono',
-          'Fira Mono',
-          monospace;
+  font-family:
+    'SF Mono',
+    'Fira Mono',
+    monospace;
 
-        color:
-          rgba(226, 232, 240, 0.92);
+  color: #f8fafc;
 
-        text-shadow:
-          0 0 10px rgba(59, 130, 246, 0.35),
-          0 0 20px rgba(59, 130, 246, 0.15);
-      }
+  opacity: 1;
+
+  filter: none;
+
+  text-shadow:
+    0 0 14px rgba(59,130,246,0.45);
+}
+.ticker-item span {
+  opacity: 1 !important;
+}
 
       .ticker-item .sym {
         color: #f8fafc;
@@ -1273,7 +1259,7 @@ import avatarImg from '../assets/avt.png';
         <span class="${cls}">
           ${arr} ${ps}
         </span>
-        <span style="color:rgba(226,232,240,.88)">
+        <span style="color:#ffffff;font-weight:600">
           ${pr}
         </span>
       </span>

@@ -94,7 +94,7 @@ import avatarImg from '../assets/avt.png';
     .btn-label .sub { display: block; margin-top: 2px; font-size: 12px; color: rgba(148,163,184,0.7); }
     .btn-arrow { color: rgba(148,163,184,0.4); font-size: 20px; }
 
-    /* ===== TICKER – ĐÃ SỬA TRIỆT ĐỂ LỖI CHỮ ĐEN ===== */
+    /* Ticker container */
     .ticker-wrap {
       width: 100%; overflow: hidden; position: relative; z-index: 50;
       margin-top: 8px; padding: 6px 0;
@@ -102,51 +102,6 @@ import avatarImg from '../assets/avt.png';
     .ticker-track {
       display: flex; gap: 24px; width: max-content;
       animation: tickerScroll 35s linear infinite;
-    }
-    .ticker-item {
-      display: flex; align-items: center; gap: 8px; white-space: nowrap;
-      font-size: 13px; font-family: 'SF Mono', 'Fira Mono', monospace;
-      color: #f8fafc; /* màu mặc định trắng cho cả dòng */
-    }
-    /* Tất cả span con kế thừa màu trắng */
-    .ticker-item span {
-      color: inherit;
-    }
-    /* Badge coin màu nền riêng, chữ bên trong đè lại */
-    .coin-badge {
-      width: 24px; height: 24px; border-radius: 50%;
-      display: inline-flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      color: #ffffff; /* chữ trắng mặc định */
-    }
-    .coin-btc { background: #f7931a; }
-    .coin-eth { background: #627eea; }
-    .coin-sol { background: #14f195; color: #000000; } /* nền sáng dùng chữ đen */
-    .coin-xrp { background: #0085d0; }
-
-    /* Symbol coin – trắng nổi bật */
-    .ticker-item .sym {
-      color: #ffffff;
-      font-weight: 700;
-      text-shadow: 0 0 8px rgba(59,130,246,0.6);
-    }
-    /* Giá thay đổi – giữ nguyên xanh/đỏ/xám */
-    .ticker-item .up {
-      color: #22c55e !important;
-      font-weight: 600;
-    }
-    .ticker-item .dn {
-      color: #ef4444 !important;
-      font-weight: 600;
-    }
-    .ticker-item .neu {
-      color: #94a3b8 !important;
-    }
-    /* Giá hiện tại – trắng đậm */
-    .ticker-item .price {
-      color: #ffffff;
-      font-weight: 600;
     }
 
     @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
@@ -202,20 +157,13 @@ import avatarImg from '../assets/avt.png';
       </a>
     </div>
 
+    <!-- Ticker (script sẽ tự điền) -->
     <div class="ticker-wrap">
-      <div class="ticker-track" id="ticker-track">
-        <!-- placeholder, sẽ được script điền vào -->
-        <span class="ticker-item">
-          <span class="coin-badge coin-btc">B</span>
-          <span class="sym">BTC/USDT</span>
-          <span class="neu">—</span>
-          <span class="price">$0.00</span>
-        </span>
-      </div>
+      <div class="ticker-track" id="ticker-track"></div>
     </div>
   </main>
 
-  <!-- Script nền & particle giữ nguyên -->
+  <!-- Background Chart -->
   <script is:inline>
     (() => {
       const canvas = document.getElementById('bg-canvas');
@@ -285,6 +233,7 @@ import avatarImg from '../assets/avt.png';
     })();
   </script>
 
+  <!-- Particles -->
   <script is:inline>
     (() => {
       const c = document.getElementById('particle-canvas'); const ctx = c.getContext('2d');
@@ -306,6 +255,7 @@ import avatarImg from '../assets/avt.png';
     })();
   </script>
 
+  <!-- Typewriter -->
   <script is:inline>
     (() => {
       const lines = ['Tư vấn cổng nạp', 'Hiểu cơ chế game', 'Tư vấn tài chính'];
@@ -327,14 +277,14 @@ import avatarImg from '../assets/avt.png';
     })();
   </script>
 
-  <!-- Ticker script – đảm bảo in đúng class và màu -->
+  <!-- TICKER – INLINE STYLE ĐỂ ĐẢM BẢO KHÔNG ĐEN -->
   <script is:inline>
     (() => {
       const COINS = [
-        { id: 'bitcoin', sym: 'BTC/USDT', badge: '₿', cssClass: 'coin-btc' },
-        { id: 'ethereum', sym: 'ETH/USDT', badge: 'Ξ', cssClass: 'coin-eth' },
-        { id: 'solana', sym: 'SOL/USDT', badge: 'S', cssClass: 'coin-sol' },
-        { id: 'ripple', sym: 'XRP/USDT', badge: 'X', cssClass: 'coin-xrp' }
+        { id: 'bitcoin', sym: 'BTC/USDT', badge: 'B', bg: '#f7931a', color: '#fff' },
+        { id: 'ethereum', sym: 'ETH/USDT', badge: 'E', bg: '#627eea', color: '#fff' },
+        { id: 'solana', sym: 'SOL/USDT', badge: 'S', bg: '#14f195', color: '#000' },
+        { id: 'ripple', sym: 'XRP/USDT', badge: 'X', bg: '#0085d0', color: '#fff' }
       ];
       const track = document.getElementById('ticker-track');
 
@@ -350,16 +300,21 @@ import avatarImg from '../assets/avt.png';
           const pr = price >= 1
             ? '$' + price.toLocaleString('en-US', { maximumFractionDigits: 2 })
             : '$' + price.toFixed(5);
+
+          // Màu cho phần trăm: up=#22c55e, dn=#ef4444, neu=#94a3b8
+          const pctColor = cls === 'up' ? '#22c55e' : cls === 'dn' ? '#ef4444' : '#94a3b8';
+
           return `
-            <span class="ticker-item">
-              <span class="coin-badge ${c.cssClass}">${c.badge}</span>
-              <span class="sym">${c.sym}</span>
-              <span class="${cls}">${arr} ${ps}</span>
-              <span class="price">${pr}</span>
+            <span class="ticker-item" style="display:flex;align-items:center;gap:8px;color:#f8fafc;font-size:13px;font-family:'SF Mono','Fira Mono',monospace;white-space:nowrap;">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${c.bg};color:${c.color};font-weight:700;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,0.3);flex-shrink:0;">${c.badge}</span>
+              <span style="font-weight:700;color:#ffffff;text-shadow:0 0 8px rgba(59,130,246,0.6);">${c.sym}</span>
+              <span style="font-weight:600;color:${pctColor};">${arr} ${ps}</span>
+              <span style="font-weight:600;color:#ffffff;">${pr}</span>
             </span>
           `;
         }).join('');
-        track.innerHTML = items + items; // nhân đôi để cuộn liên tục
+
+        track.innerHTML = items + items; // nhân đôi để cuộn mượt
       }
 
       async function fetchPrices() {

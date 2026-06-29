@@ -13,499 +13,696 @@ import avatarImg from '../assets/avt.png';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>NTTP</title>
+
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
       body {
         background: #060c18;
         min-height: 100vh;
         min-height: 100dvh;
+
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+
         overflow-x: hidden;
         overflow-y: auto;
+
         position: relative;
       }
 
-      /* ── Background canvas layers ── */
+      /* =========================
+         BACKGROUND
+      ========================= */
+
+      #bg-canvas,
+      #particle-canvas {
+        position: fixed;
+        inset: 0;
+
+        width: 100%;
+        height: 100%;
+      }
+
       #bg-canvas {
-        position: fixed; inset: 0;
-        width: 100%; height: 100%;
         z-index: 0;
       }
+
       #particle-canvas {
-        position: fixed; inset: 0;
-        width: 100%; height: 100%;
         z-index: 1;
         pointer-events: none;
       }
 
-      /* Vignette — darkens edges heavily so content pops */
       .vignette {
-        position: fixed; inset: 0;
-        background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent 20%, rgba(6,12,24,0.75) 65%, #060c18 100%);
-        z-index: 2; pointer-events: none;
-      }
-      .fade-top {
-        position: fixed; top: 0; left: 0; right: 0; height: 120px;
-        background: linear-gradient(to bottom, #060c18 0%, transparent 100%);
-        z-index: 2; pointer-events: none;
-      }
-      .fade-bottom {
-        position: fixed; bottom: 0; left: 0; right: 0; height: 160px;
-        background: linear-gradient(to top, #060c18 0%, transparent 100%);
-        z-index: 2; pointer-events: none;
+        position: fixed;
+        inset: 0;
+
+        background:
+          radial-gradient(
+            ellipse 90% 80% at 50% 50%,
+            transparent 35%,
+            rgba(6, 12, 24, 0.45) 75%,
+            #060c18 100%
+          );
+
+        z-index: 2;
+        pointer-events: none;
       }
 
-      /* ── Main content ── */
+      .fade-top {
+        position: fixed;
+
+        top: 0;
+        left: 0;
+        right: 0;
+
+        height: 70px;
+
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(6, 12, 24, 0.45) 0%,
+            transparent 100%
+          );
+
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .fade-bottom {
+        position: fixed;
+
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        height: 160px;
+
+        background:
+          linear-gradient(
+            to top,
+            #060c18 0%,
+            transparent 100%
+          );
+
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      /* =========================
+         MAIN
+      ========================= */
+
       main {
-        position: relative; z-index: 10;
-        display: flex; flex-direction: column;
-        align-items: center;
-        gap: 18px;
-        padding: 48px 20px 40px;
+        position: relative;
+        z-index: 10;
+
         width: 100%;
         max-width: 400px;
-        /* allow scroll on very small screens */
+
         min-height: 100dvh;
+
+        display: flex;
+        flex-direction: column;
         justify-content: center;
+        align-items: center;
+
+        gap: 18px;
+
+        padding: 48px 20px 40px;
       }
 
-      /* ── Avatar ── */
+      /* =========================
+         AVATAR
+      ========================= */
+
       .logo-wrap {
         animation: fadeDown 0.6s ease both;
       }
+
       .avt {
-        width: 84px; height: 84px;
-        border-radius: 50%; object-fit: cover;
-        border: 2.5px solid rgba(59,130,246,0.6);
-        box-shadow: 0 0 0 4px rgba(59,130,246,0.12), 0 0 32px rgba(59,130,246,0.3);
+        width: 84px;
+        height: 84px;
+
+        border-radius: 50%;
+        object-fit: cover;
+
+        border: 2.5px solid rgba(59, 130, 246, 0.6);
+
+        box-shadow:
+          0 0 0 4px rgba(59, 130, 246, 0.12),
+          0 0 32px rgba(59, 130, 246, 0.3);
+
         display: block;
       }
 
-      /* ── NTTP name ── */
+      /* =========================
+         TITLE
+      ========================= */
+
       .name-block {
-        display: flex; flex-direction: column; align-items: center; gap: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        gap: 10px;
+
         animation: fadeDown 0.6s 0.1s ease both;
       }
+
       .name-nttp {
         font-size: clamp(54px, 20vw, 78px);
+
         font-weight: 800;
         letter-spacing: 0.22em;
-        background: linear-gradient(140deg, #ffffff 0%, #bfdbfe 40%, #3b82f6 100%);
+
+        line-height: 1;
+        text-align: center;
+
+        background:
+          linear-gradient(
+            140deg,
+            #ffffff 0%,
+            #bfdbfe 40%,
+            #3b82f6 100%
+          );
+
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        filter: drop-shadow(0 0 24px rgba(59,130,246,0.5));
-        line-height: 1;
-        text-align: center;
+
+        filter:
+          drop-shadow(
+            0 0 24px rgba(59, 130, 246, 0.5)
+          );
       }
 
-      /* ── Typewriter tagline ── */
+      /* =========================
+         TAGLINE
+      ========================= */
+
       .tagline-wrap {
         min-height: 22px;
-        display: flex; align-items: center; justify-content: center;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
+
       .tagline {
         color: #94a3b8;
+
         font-size: 14px;
         font-weight: 400;
+
         letter-spacing: 0.08em;
       }
+
       .cursor {
         display: inline-block;
-        width: 2px; height: 14px;
+
+        width: 2px;
+        height: 14px;
+
         background: #3b82f6;
+
         margin-left: 2px;
+
         vertical-align: middle;
+
         animation: blink 0.85s step-end infinite;
       }
-      @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
       .divider {
-        width: 32px; height: 1px;
-        background: rgba(59,130,246,0.35);
-        animation: fadeDown 0.6s 0.18s ease both;
+        width: 32px;
+        height: 1px;
+
+        background:
+          rgba(59, 130, 246, 0.35);
+
+        animation:
+          fadeDown 0.6s 0.18s ease both;
       }
 
-      /* ── Link buttons ── */
+      /* =========================
+         BUTTONS
+      ========================= */
+
       .contacts {
-        display: flex; flex-direction: column; gap: 10px;
         width: 100%;
-        animation: fadeUp 0.6s 0.24s ease both;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 10px;
+
+        animation:
+          fadeUp 0.6s 0.24s ease both;
       }
+
       .btn {
-        display: flex; align-items: center; gap: 13px;
-        padding: 13px 16px; border-radius: 14px;
+        position: relative;
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+
+        gap: 13px;
+
+        min-height: 58px;
+
+        padding: 13px 16px;
+
+        border-radius: 14px;
+
         text-decoration: none;
-        border: 1px solid rgba(255,255,255,0.09);
-        background: rgba(255,255,255,0.05);
+
+        color: #e2e8f0;
+
+        font-size: 15px;
+        font-weight: 500;
+
+        border:
+          1px solid rgba(255, 255, 255, 0.09);
+
+        background:
+          rgba(255, 255, 255, 0.05);
+
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        color: #e2e8f0;
-        font-size: 15px; font-weight: 500;
-        position: relative; overflow: hidden;
-        transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-        min-height: 58px;
+
+        transition:
+          transform 0.15s ease,
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+
         -webkit-tap-highlight-color: transparent;
       }
+
       .btn::before {
-        content:''; position:absolute; inset:0;
-        opacity:0; transition:opacity 0.15s; border-radius:inherit;
+        content: '';
+
+        position: absolute;
+        inset: 0;
+
+        opacity: 0;
+
+        border-radius: inherit;
+
+        transition: opacity 0.15s;
       }
-      .btn-llwin::before    { background: linear-gradient(135deg,rgba(37,99,235,.2),rgba(37,99,235,.05)); }
-      .btn-tiktok::before   { background: linear-gradient(135deg,rgba(20,184,166,.18),rgba(244,63,94,.15)); }
-      .btn-telegram::before { background: linear-gradient(135deg,rgba(14,165,233,.2),rgba(37,99,235,.08)); }
-      .btn:active { transform: scale(0.97); border-color: rgba(255,255,255,.2); box-shadow: 0 6px 24px rgba(0,0,0,.4); }
-      .btn:active::before { opacity: 1; }
+
+      .btn-llwin::before {
+        background:
+          linear-gradient(
+            135deg,
+            rgba(37, 99, 235, 0.2),
+            rgba(37, 99, 235, 0.05)
+          );
+      }
+
+      .btn-tiktok::before {
+        background:
+          linear-gradient(
+            135deg,
+            rgba(20, 184, 166, 0.18),
+            rgba(244, 63, 94, 0.15)
+          );
+      }
+
+      .btn-telegram::before {
+        background:
+          linear-gradient(
+            135deg,
+            rgba(14, 165, 233, 0.2),
+            rgba(37, 99, 235, 0.08)
+          );
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+
+        border-color:
+          rgba(255, 255, 255, 0.18);
+
+        box-shadow:
+          0 12px 32px rgba(0, 0, 0, 0.3);
+      }
+
+      .btn:hover::before {
+        opacity: 1;
+      }
 
       .btn-icon {
-        width: 38px; height: 38px; border-radius: 10px;
-        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+
+        border-radius: 10px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
       }
-      .btn-llwin .btn-icon    { background: #1a2540; }
-      .btn-tiktok .btn-icon   { background: #0d0d0d; }
-      .btn-telegram .btn-icon { background: #0ea5e9; }
-      .btn-icon img { width: 22px; height: 22px; object-fit: contain; }
 
-      .btn-label { flex: 1; }
-      .btn-label .name { display: block; font-size: 15px; font-weight: 600; color: #f1f5f9; }
-      .btn-label .sub  { display: block; font-size: 12px; color: rgba(148,163,184,.7); margin-top: 2px; }
-      .btn-arrow { color: rgba(148,163,184,.4); font-size: 20px; }
+      .btn-llwin .btn-icon {
+        background: #1a2540;
+      }
 
-      /* ── Ticker ── */
+      .btn-tiktok .btn-icon {
+        background: #0d0d0d;
+      }
+
+      .btn-telegram .btn-icon {
+        background: #0ea5e9;
+      }
+
+      .btn-icon img {
+        width: 22px;
+        height: 22px;
+
+        object-fit: contain;
+      }
+
+      .btn-label {
+        flex: 1;
+      }
+
+      .btn-label .name {
+        display: block;
+
+        font-size: 15px;
+        font-weight: 600;
+
+        color: #f1f5f9;
+      }
+
+      .btn-label .sub {
+        display: block;
+
+        margin-top: 2px;
+
+        font-size: 12px;
+
+        color:
+          rgba(148, 163, 184, 0.7);
+      }
+
+      .btn-arrow {
+        color:
+          rgba(148, 163, 184, 0.4);
+
+        font-size: 20px;
+      }
+
+      /* =========================
+         TICKER
+      ========================= */
+
       .ticker-wrap {
-        width: 100%; overflow: hidden;
-        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-        -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-        animation: fadeUp 0.6s 0.32s ease both;
-        position: relative;
-        z-index: 11;  /* cao hơn vignette (z-index: 2) */
-      }
-      .ticker-track {
-        display: flex; gap: 20px;
-        animation: tickerScroll 32s linear infinite;
-        width: max-content;
-      }
-      .ticker-item {
-        display: flex; align-items: center; gap: 5px;
-        font-size: 11px; font-family: 'SF Mono','Fira Mono',monospace;
-        color: rgba(148,163,184,.55); white-space: nowrap;
-      }
-      .ticker-item .sym { color: rgba(203,213,225,.75); font-weight: 600; }
-      .ticker-item .up  { color: #10b981; }
-      .ticker-item .dn  { color: #ef4444; }
-      .ticker-item .neu { color: #64748b; }
+        width: 100%;
+        overflow: hidden;
 
-      @keyframes tickerScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-      @keyframes fadeDown { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
-      @keyframes fadeUp   { from{opacity:0;transform:translateY(14px)}  to{opacity:1;transform:translateY(0)} }
+        position: relative;
+        z-index: 20;
+
+        margin-top: 6px;
+
+        mask-image:
+          linear-gradient(
+            to right,
+            transparent,
+            black 10%,
+            black 90%,
+            transparent
+          );
+
+        -webkit-mask-image:
+          linear-gradient(
+            to right,
+            transparent,
+            black 10%,
+            black 90%,
+            transparent
+          );
+
+        animation:
+          fadeUp 0.6s 0.32s ease both;
+      }
+
+      .ticker-track {
+        display: flex;
+
+        gap: 22px;
+
+        width: max-content;
+
+        animation:
+          tickerScroll 32s linear infinite;
+      }
+
+      .ticker-item {
+        display: flex;
+        align-items: center;
+
+        gap: 6px;
+
+        white-space: nowrap;
+
+        font-size: 12px;
+
+        font-family:
+          'SF Mono',
+          'Fira Mono',
+          monospace;
+
+        color:
+          rgba(226, 232, 240, 0.92);
+
+        text-shadow:
+          0 0 10px rgba(59, 130, 246, 0.35),
+          0 0 20px rgba(59, 130, 246, 0.15);
+      }
+
+      .ticker-item .sym {
+        color: #f8fafc;
+        font-weight: 700;
+      }
+
+      .ticker-item .up {
+        color: #22c55e;
+        font-weight: 600;
+      }
+
+      .ticker-item .dn {
+        color: #ef4444;
+        font-weight: 600;
+      }
+
+      .ticker-item .neu {
+        color: #94a3b8;
+      }
+
+      /* =========================
+         ANIMATIONS
+      ========================= */
+
+      @keyframes blink {
+        0%, 100% {
+          opacity: 1;
+        }
+
+        50% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes tickerScroll {
+        0% {
+          transform: translateX(0);
+        }
+
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
+      @keyframes fadeDown {
+        from {
+          opacity: 0;
+          transform: translateY(-14px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
   </head>
 
   <body>
     <canvas id="bg-canvas"></canvas>
     <canvas id="particle-canvas"></canvas>
+
     <div class="vignette"></div>
     <div class="fade-top"></div>
     <div class="fade-bottom"></div>
 
     <main>
       <div class="logo-wrap">
-        <img src={avatarImg.src} alt="Avatar" class="avt" />
+        <img
+          src={avatarImg.src}
+          alt="Avatar"
+          class="avt"
+        />
       </div>
 
       <div class="name-block">
-        <div class="name-nttp">NTTP</div>
+        <div class="name-nttp">
+          NTTP
+        </div>
+
         <div class="tagline-wrap">
-          <span class="tagline" id="tagline-text"></span><span class="cursor"></span>
+          <span
+            class="tagline"
+            id="tagline-text"
+          ></span>
+
+          <span class="cursor"></span>
         </div>
       </div>
 
       <div class="divider"></div>
 
       <div class="contacts">
-        <a href={llwinUrl} target="_blank" rel="noopener" class="btn btn-llwin">
-          <div class="btn-icon"><img src={llwinLogo.src} alt="LLwin" /></div>
-          <div class="btn-label">
-            <span class="name">LLwin</span>
-            <span class="sub">Cổng game tốt nhất hiện tại</span>
+        <a
+          href={llwinUrl}
+          target="_blank"
+          rel="noopener"
+          class="btn btn-llwin"
+        >
+          <div class="btn-icon">
+            <img
+              src={llwinLogo.src}
+              alt="LLwin"
+            />
           </div>
-          <span class="btn-arrow">›</span>
+
+          <div class="btn-label">
+            <span class="name">
+              LLwin
+            </span>
+
+            <span class="sub">
+              Cổng game tốt nhất hiện tại
+            </span>
+          </div>
+
+          <span class="btn-arrow">
+            ›
+          </span>
         </a>
-        <a href={tiktokUrl} target="_blank" rel="noopener" class="btn btn-tiktok">
-          <div class="btn-icon"><img src={tiktokLogo.src} alt="TikTok" /></div>
-          <div class="btn-label">
-            <span class="name">TikTok</span>
-            <span class="sub">Phân tích & thực chiến</span>
+
+        <a
+          href={tiktokUrl}
+          target="_blank"
+          rel="noopener"
+          class="btn btn-tiktok"
+        >
+          <div class="btn-icon">
+            <img
+              src={tiktokLogo.src}
+              alt="TikTok"
+            />
           </div>
-          <span class="btn-arrow">›</span>
+
+          <div class="btn-label">
+            <span class="name">
+              TikTok
+            </span>
+
+            <span class="sub">
+              Phân tích & thực chiến
+            </span>
+          </div>
+
+          <span class="btn-arrow">
+            ›
+          </span>
         </a>
-        <a href={telegramUrl} target="_blank" rel="noopener" class="btn btn-telegram">
-          <div class="btn-icon"><img src={telegramLogo.src} alt="Telegram" /></div>
-          <div class="btn-label">
-            <span class="name">Telegram</span>
-            <span class="sub">Chia sẻ & giao lưu</span>
+
+        <a
+          href={telegramUrl}
+          target="_blank"
+          rel="noopener"
+          class="btn btn-telegram"
+        >
+          <div class="btn-icon">
+            <img
+              src={telegramLogo.src}
+              alt="Telegram"
+            />
           </div>
-          <span class="btn-arrow">›</span>
+
+          <div class="btn-label">
+            <span class="name">
+              Telegram
+            </span>
+
+            <span class="sub">
+              Chia sẻ & giao lưu
+            </span>
+          </div>
+
+          <span class="btn-arrow">
+            ›
+          </span>
         </a>
       </div>
 
       <div class="ticker-wrap">
-        <div class="ticker-track" id="ticker-track">
-          <span class="ticker-item"><span class="sym">BTC/USDT</span><span class="neu">—</span></span>
+        <div
+          class="ticker-track"
+          id="ticker-track"
+        >
+          <span class="ticker-item">
+            <span class="sym">
+              BTC/USDT
+            </span>
+
+            <span class="neu">
+              —
+            </span>
+          </span>
         </div>
       </div>
     </main>
-
-    <!-- ══ SCRIPT 1: Combined BG canvas (candles + live-ish BTC line) ══ -->
-    <script is:inline>
-    (() => {
-      const canvas = document.getElementById('bg-canvas');
-      const ctx = canvas.getContext('2d');
-      let W, H, candles = [], linePoints = [];
-      const CW = 9, GAP = 5, STEP = CW + GAP;
-
-      function resize() {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-        initCandles();
-      }
-
-      function randPrice(prev) {
-        return Math.max(0.06, Math.min(0.94, prev + (Math.random() - 0.47) * 0.055));
-      }
-
-      function initCandles() {
-        const n = Math.ceil(W / STEP) + 6;
-        candles = [];
-        let p = 0.38 + Math.random() * 0.24;
-        for (let i = 0; i < n; i++) {
-          const open = p; p = randPrice(p);
-          candles.push({
-            open, close: p,
-            high: Math.max(open, p) + Math.random() * 0.022,
-            low:  Math.min(open, p) - Math.random() * 0.022,
-          });
-        }
-        // build a smooth price line (simulating BTC-like trend)
-        linePoints = candles.map((c, i) => ({
-          x: i * STEP + STEP,
-          y: (c.open + c.close) / 2,
-        }));
-      }
-
-      function evolve() {
-        candles.shift();
-        const prev = candles[candles.length - 1].close;
-        const open = prev, close = randPrice(prev);
-        candles.push({
-          open, close,
-          high: Math.max(open, close) + Math.random() * 0.022,
-          low:  Math.min(open, close) - Math.random() * 0.022,
-        });
-        linePoints.shift();
-        linePoints.forEach(p => p.x -= STEP);
-        linePoints.push({ x: candles.length * STEP, y: (open + close) / 2 });
-      }
-
-      function py(v) {
-        return H * 0.1 + (1 - v) * H * 0.8;
-      }
-
-      function drawBg() {
-        // subtle grid
-        ctx.strokeStyle = 'rgba(37,99,235,0.04)';
-        ctx.lineWidth = 0.5;
-        for (let g = 0; g <= 5; g++) {
-          const y = H * 0.1 + (g / 5) * H * 0.8;
-          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-        }
-        for (let g = 0; g <= 8; g++) {
-          const x = (g / 8) * W;
-          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-        }
-      }
-
-      function drawCandles(off) {
-        candles.forEach((c, i) => {
-          const x = i * STEP - off + STEP;
-          if (x < -STEP * 2 || x > W + STEP) return;
-          const bull = c.close >= c.open;
-          const col  = bull ? '#10b981' : '#ef4444';
-          const colA = bull ? 'rgba(16,185,129,' : 'rgba(239,68,68,';
-          const oY = py(c.open), cY = py(c.close);
-          const top = Math.min(oY, cY), bH = Math.max(1.5, Math.abs(cY - oY));
-
-          // glow drip
-          const grd = ctx.createLinearGradient(x, top, x, top + bH + 50);
-          grd.addColorStop(0, colA + '0.13)');
-          grd.addColorStop(1, colA + '0)');
-          ctx.fillStyle = grd;
-          ctx.fillRect(x - CW / 2, top, CW, bH + 50);
-
-          // wick
-          ctx.strokeStyle = col; ctx.globalAlpha = 0.45; ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.moveTo(x, py(c.high)); ctx.lineTo(x, py(c.low)); ctx.stroke();
-
-          // body
-          ctx.fillStyle = col; ctx.globalAlpha = bull ? 0.65 : 0.52;
-          ctx.fillRect(x - CW / 2, top, CW, bH);
-          ctx.globalAlpha = 1;
-        });
-      }
-
-      function drawPriceLine(off) {
-        if (linePoints.length < 2) return;
-        // glowing area under the line
-        ctx.beginPath();
-        ctx.moveTo(linePoints[0].x - off, py(linePoints[0].y));
-        for (let i = 1; i < linePoints.length; i++) {
-          const x0 = linePoints[i-1].x - off, y0 = py(linePoints[i-1].y);
-          const x1 = linePoints[i].x - off,   y1 = py(linePoints[i].y);
-          const mx = (x0 + x1) / 2;
-          ctx.quadraticCurveTo(x0, y0, mx, (y0+y1)/2);
-        }
-        const last = linePoints[linePoints.length-1];
-        ctx.lineTo(last.x - off, H);
-        ctx.lineTo(linePoints[0].x - off, H);
-        ctx.closePath();
-        const fillGrd = ctx.createLinearGradient(0, H * 0.1, 0, H * 0.9);
-        fillGrd.addColorStop(0, 'rgba(59,130,246,0.07)');
-        fillGrd.addColorStop(1, 'rgba(59,130,246,0)');
-        ctx.fillStyle = fillGrd; ctx.fill();
-
-        // line itself
-        ctx.beginPath();
-        ctx.moveTo(linePoints[0].x - off, py(linePoints[0].y));
-        for (let i = 1; i < linePoints.length; i++) {
-          const x0 = linePoints[i-1].x - off, y0 = py(linePoints[i-1].y);
-          const x1 = linePoints[i].x - off,   y1 = py(linePoints[i].y);
-          const mx = (x0 + x1) / 2;
-          ctx.quadraticCurveTo(x0, y0, mx, (y0+y1)/2);
-        }
-        ctx.strokeStyle = 'rgba(59,130,246,0.55)';
-        ctx.lineWidth = 1.8; ctx.stroke();
-      }
-
-      let offset = 0;
-      function loop() {
-        ctx.clearRect(0, 0, W, H);
-        offset += 0.3;
-        if (offset >= STEP) { offset -= STEP; evolve(); }
-        drawBg();
-        drawCandles(offset);
-        drawPriceLine(offset);
-        requestAnimationFrame(loop);
-      }
-
-      window.addEventListener('resize', resize);
-      resize(); loop();
-    })();
-    </script>
-
-    <!-- ══ SCRIPT 2: Particle / star field ══ -->
-    <script is:inline>
-    (() => {
-      const c = document.getElementById('particle-canvas');
-      const ctx = c.getContext('2d');
-      let W, H, stars = [];
-      function resize() {
-        W = c.width = window.innerWidth;
-        H = c.height = window.innerHeight;
-        stars = Array.from({ length: 70 }, mk);
-      }
-      function mk() {
-        return {
-          x: Math.random() * (W || 390),
-          y: Math.random() * (H || 844),
-          r: Math.random() * 1.0 + 0.2,
-          speed: Math.random() * 0.14 + 0.03,
-          alpha: Math.random() * 0.4 + 0.1,
-          drift: (Math.random() - 0.5) * 0.08,
-          ph: Math.random() * Math.PI * 2,
-        };
-      }
-      (function loop() {
-        ctx.clearRect(0, 0, W, H);
-        stars.forEach(s => {
-          s.y -= s.speed; s.x += s.drift; s.ph += 0.01;
-          if (s.y < -3 || s.x < -3 || s.x > W + 3) {
-            Object.assign(s, mk()); s.y = H + 3; s.x = Math.random() * W;
-          }
-          const a = s.alpha * (0.65 + 0.35 * Math.sin(s.ph));
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(147,197,253,${a.toFixed(2)})`;
-          ctx.fill();
-        });
-        requestAnimationFrame(loop);
-      })();
-      window.addEventListener('resize', resize);
-      resize();
-    })();
-    </script>
-
-    <!-- ══ SCRIPT 3: Typewriter tagline ══ -->
-    <script is:inline>
-    (() => {
-      const lines = ['Tư vấn cổng nạp', 'Hiểu cơ chế game', 'Tư vấn tài chính'];
-      const el = document.getElementById('tagline-text');
-      let li = 0, ci = 0, del = false;
-      function tick() {
-        const line = lines[li];
-        if (!del) {
-          el.textContent = line.slice(0, ++ci);
-          if (ci >= line.length) { del = true; setTimeout(tick, 2000); return; }
-          setTimeout(tick, 70);
-        } else {
-          el.textContent = line.slice(0, --ci);
-          if (ci <= 0) { del = false; li = (li + 1) % lines.length; setTimeout(tick, 350); return; }
-          setTimeout(tick, 34);
-        }
-      }
-      setTimeout(tick, 800);
-    })();
-    </script>
-
-    <!-- ══ SCRIPT 4: Real-time ticker (CoinGecko) ══ -->
-    <script is:inline>
-    (() => {
-      const COINS = [
-        { id:'bitcoin', sym:'BTC/USDT' }, { id:'ethereum', sym:'ETH/USDT' },
-        { id:'solana', sym:'SOL/USDT' },  { id:'binancecoin', sym:'BNB/USDT' },
-        { id:'ripple', sym:'XRP/USDT' },  { id:'dogecoin', sym:'DOGE/USDT' },
-        { id:'cardano', sym:'ADA/USDT' }, { id:'avalanche-2', sym:'AVAX/USDT' },
-      ];
-      const track = document.getElementById('ticker-track');
-      function render(data) {
-        const html = COINS.map(c => {
-          const d = data[c.id]; if (!d) return '';
-          const pct = d.usd_24h_change, price = d.usd;
-          const cls = pct > 0 ? 'up' : pct < 0 ? 'dn' : 'neu';
-          const arr = pct > 0 ? '▲' : pct < 0 ? '▼' : '–';
-          const ps = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
-          const pr = price >= 1
-            ? '$' + price.toLocaleString('en-US', { maximumFractionDigits: 2 })
-            : '$' + price.toFixed(5);
-          return `<span class="ticker-item"><span class="sym">${c.sym}</span> <span class="${cls}">${arr} ${ps}</span> <span style="color:rgba(148,163,184,.55)">${pr}</span></span>`;
-        }).join('');
-        track.innerHTML = html + html;
-      }
-      async function fetchPrices() {
-        try {
-          const ids = COINS.map(c => c.id).join(',');
-          const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`, { cache: 'no-store' });
-          if (r.ok) render(await r.json());
-        } catch(e) { console.warn('ticker:', e); }
-      }
-      fetchPrices();
-      setInterval(fetchPrices, 60000);
-    })();
-    </script>
-
   </body>
 </html>
